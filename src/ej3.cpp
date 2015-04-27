@@ -18,15 +18,16 @@ int main() {
 	{
 		conexion temp;
 		cin >> temp.a >> temp.b >> temp.c;
+		temp.a--;
+		temp.b--;
 		if (temp.c<C) conexiones.push_back(temp);
 	}
 	sort(conexiones.begin(), conexiones.end());
-
 	int ultimo_arbol=0;
 	vector<int> arboles(n,-1); // iesima posicion indica en que numero de arbol esta el nodo i
 	vector<conexion> conexiones_finales;
 	int costo_final=0;
-	for (auto it = conexiones.begin(); it < conexiones.end(); ++it)
+	for (auto it = conexiones.begin(); it != conexiones.end(); ++it)
 	{
 		/* opciones: a y b no estan en ningun arbol
 					 uno de los dos si
@@ -34,7 +35,9 @@ int main() {
 					 los dos estan en arboles diferentes
 		*/
 		if (arboles[it->a] == -1 && arboles[it->b] == -1) { // si ningun nodo esta en ningun arbol
-			arboles[it->a] = arboles[it->b] = ultimo_arbol++; // wowowowowo
+			arboles[it->a] = ultimo_arbol;
+			arboles[it->b] = ultimo_arbol;
+			ultimo_arbol++; // wowowowowo
 			conexiones_finales.push_back(*it);
 			costo_final += it->c;
 		}

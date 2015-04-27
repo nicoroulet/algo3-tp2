@@ -41,5 +41,5 @@ NAMES="
 for f in $NAMES
 do 
 echo "Testeando $f..."
-diff -Z -q <(./ej3 < tests.tp2.ej3.v1.1/$f.in) tests.tp2.ej3.v1.1/$f.out
+diff -Z -q <(./ej3 < tests.tp2.ej3.v1.1/$f.in | sed -n '1p' | awk '{print $1}') tests.tp2.ej3.v1.1/$f.out
 done
