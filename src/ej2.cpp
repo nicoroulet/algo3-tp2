@@ -8,7 +8,8 @@
 using namespace std;
 
 typedef struct {
-	int i, j, s;
+	int i, j;
+	unsigned int s;
 } coord;
 struct data {
 	//int u, d, l, r; // up down left right, con cuantos soldados podes llegar a los vecinos
@@ -17,7 +18,8 @@ struct data {
 };
 
 int main() {
-	int n, m, s, Ih, Iv, Bh, Bv;
+	int n, m, Ih, Iv, Bh, Bv;
+	unsigned int s;
 	cin >> n >> m >> s >> Ih >> Iv >> Bh >> Bv;
 	Iv--;Ih--;Bv--;Bh--;
 	vector<vector<int> > calles(2*n-1, vector<int>(m));
@@ -38,26 +40,31 @@ int main() {
 	}
 	Ciudad c(calles);
 
-	vector<vector<vector<data> > > grafo(n, vector<vector<data> >(m, vector<data>(s, {{-1,-1,-1},false})));
+	vector<vector<vector<data> > > grafo(n, vector<vector<data> >(m, vector<data>(s, data({coord({-1,-1,0}),false}))));
 	queue<coord> q;
-	q.push({Ih, Iv, s});
+	q.push(coord({Ih, Iv, s}));
 	// bfs
 	while(!q.empty()){
 		coord n = q.front();
 		q.pop();
 		for (int d = 0; d < 4; ++d) // conecto a los vecinos con la cantidad de soldados correspondientes
 		{
-			if (n.s > 2 * c.calle(n.i, n.j, U)) {
-				coord vecino = {n.i - (d==U) + (d==D), n.j - (d==L) + (d==R), 2 * n.s - c.calle(n.i, n.j, U)};
+			if (n.s > 2 * c.calle(n.i, n.j, (direccion)d)) {
+				coord vecino = {n.i - (d==U) + (d==D), n.j - (d==L) + (d==R), min(2 * n.s - c.calle(n.i, n.j, (direccion)d), n.s)};
 				if (!grafo[vecino.i][vecino.j][vecino.s].visitado) {
-					grafo[vecino.i][vecino.j][vecino.s] = {n, true};
+					grafo[vecino.i][vecino.j][vecino.s].pre.i = n.i;
+					grafo[vecino.i][vecino.j][vecino.s].pre.j = n.j;
+					grafo[vecino.i][vecino.j][vecino.s].pre.s = n.s;
+					grafo[vecino.i][vecino.j][vecino.s].visitado = true;
 					q.push(vecino);
 				}
 			}
 		}
+		// break;
 	}
 	cout << "esta todo bien\n";
-	int sfinal;
+	
+	unsigned int sfinal;
 	for (sfinal = s; !grafo[Bh][Bv][sfinal].visitado && sfinal > 0; --sfinal) {} // busco el bunker visitado con mas soldados
 	if (sfinal == 0) {
 		cout << 0 << endl;
@@ -69,11 +76,12 @@ int main() {
 		camino.push_front(aux);
 		aux = grafo[aux.i][aux.j][aux.s].pre;
 	}
-
+	cout << "ahora couteamos\n";
 	cout << sfinal << endl;
 	for (auto it = camino.begin(); it != camino.end(); ++it) {
 		cout << it->i << " " << it->j << endl;
 	}
+	cout << "ya coutie\n";
 
 	return 0;
 }
