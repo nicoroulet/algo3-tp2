@@ -1,9 +1,9 @@
 #include <vector>
 #include <iostream>
 
+enum direccion {U, L, D, R};
 class Ciudad {
 public:
-	enum direccion {U, R, D, L};
 	Ciudad(std::vector<std::vector<int> > &calles);
 	int calle(int i, int j, direccion d);
 private:
