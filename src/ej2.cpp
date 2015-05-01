@@ -7,15 +7,15 @@
 
 using namespace std;
 
-typedef struct {
+struct coord {
 	int i, j;
 	unsigned int s;
-} coord;
+} __attribute__((packed));
 struct data {
 	//int u, d, l, r; // up down left right, con cuantos soldados podes llegar a los vecinos
 	coord pre; // predecesor
 	bool visitado;
-};
+} __attribute__((packed));
 
 int main() {
 	int n, m, Ih, Iv, Bh, Bv;
@@ -40,7 +40,7 @@ int main() {
 	}
 	Ciudad c(calles);
 
-	vector<vector<vector<data> > > grafo(n, vector<vector<data> >(m, vector<data>(s, data({coord({-1,-1,0}),false}))));
+	vector<vector<vector<data> > > grafo(n, vector<vector<data> >(m, vector<data>(s+1, {{-1,-1,0},false})));
 	queue<coord> q;
 	q.push(coord({Ih, Iv, s}));
 	// bfs
@@ -52,17 +52,13 @@ int main() {
 			if (n.s > 2 * c.calle(n.i, n.j, (direccion)d)) {
 				coord vecino = {n.i - (d==U) + (d==D), n.j - (d==L) + (d==R), min(2 * n.s - c.calle(n.i, n.j, (direccion)d), n.s)};
 				if (!grafo[vecino.i][vecino.j][vecino.s].visitado) {
-					grafo[vecino.i][vecino.j][vecino.s].pre.i = n.i;
-					grafo[vecino.i][vecino.j][vecino.s].pre.j = n.j;
-					grafo[vecino.i][vecino.j][vecino.s].pre.s = n.s;
-					grafo[vecino.i][vecino.j][vecino.s].visitado = true;
+					grafo[vecino.i][vecino.j][vecino.s] = {n, true};
 					q.push(vecino);
 				}
 			}
 		}
 		// break;
 	}
-	cout << "esta todo bien\n";
 	
 	unsigned int sfinal;
 	for (sfinal = s; !grafo[Bh][Bv][sfinal].visitado && sfinal > 0; --sfinal) {} // busco el bunker visitado con mas soldados
@@ -76,12 +72,10 @@ int main() {
 		camino.push_front(aux);
 		aux = grafo[aux.i][aux.j][aux.s].pre;
 	}
-	cout << "ahora couteamos\n";
 	cout << sfinal << endl;
 	for (auto it = camino.begin(); it != camino.end(); ++it) {
 		cout << it->i << " " << it->j << endl;
 	}
-	cout << "ya coutie\n";
 
 	return 0;
 }
