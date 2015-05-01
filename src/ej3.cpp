@@ -2,13 +2,16 @@
 #include <vector>
 #include <algorithm>
 
+#include "Tiempo.h"
+
 using namespace std;
 struct conexion {
 	int a, b, c; // pozo a, pozo b, costo
 	bool operator<(const conexion c2) const {return c<c2.c;}
 };
 
-int main() {
+int main(int argc, char* argv[]) {
+	
 	int n, m, C;
 	cin >> n >> m >> C; // pozos, conexiones, costo refineria
 
@@ -22,6 +25,9 @@ int main() {
 		temp.b--;
 		if (temp.c<C) conexiones.push_back(temp);
 	}
+	
+	Tiempo t; t.begin();
+	
 	sort(conexiones.begin(), conexiones.end());
 	int ultimo_arbol=0;
 	vector<int> arboles(n,-1); // iesima posicion indica en que numero de arbol esta el nodo i
@@ -33,11 +39,10 @@ int main() {
 					 uno de los dos si
 					 los dos estan en el mismo arbol
 					 los dos estan en arboles diferentes
+		
 		*/
 		if (arboles[it->a] == -1 && arboles[it->b] == -1) { // si ningun nodo esta en ningun arbol
-			arboles[it->a] = ultimo_arbol;
-			arboles[it->b] = ultimo_arbol;
-			ultimo_arbol++; // wowowowowo
+			arboles[it->a] = arboles[it->b] = ultimo_arbol++; // wowowowowo
 			conexiones_finales.push_back(*it);
 			costo_final += it->c;
 		}
@@ -69,6 +74,9 @@ int main() {
 		if (find(arboles.begin(), it, *it) == it || (*it == -1)) refinerias.push_back(i);
 	}
 	costo_final += refinerias.size() * C;
+	
+	t.end(); ofstream f(argv[1], ofstream::app); f << n << " " << t.time() << endl;
+	
 	cout << costo_final << " " << refinerias.size() << " " << conexiones_finales.size() << endl;
 	for (int i = 0; i < refinerias.size(); ++i)
 	{

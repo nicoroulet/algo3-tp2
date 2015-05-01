@@ -12,6 +12,7 @@ ej3: ej3.cpp
 ciudad.o: ciudad.h ciudad.cpp
 	g++ -c ciudad.cpp -o ciudad.o
 
+
 clean:
 	rm -f ej1
 	rm -f ej2
